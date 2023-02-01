@@ -5,16 +5,12 @@ MAX_ITER = 200;
 rel_tol = 1e-4;
 [row,col,~] = size(f);
 
-u=zeros(row,col,n);
-v = zeros(size(u));
-qx = Dx(v);
-qy = Dy(v);
 
 F = zeros(row,col,n);
 
 
 
-c = zeros(1,n);
+c = zeros(n,1);
 
 
 if method == 1
@@ -37,7 +33,9 @@ else
     %u = projsplx(u);
     u = reshape(u,row, col,n);
 end
-
+v = u;
+qx = Dx(v);
+qy = Dy(v);
 
 %v = u;
 %qx = Dx(v);
@@ -81,7 +79,7 @@ for i = 1:MAX_ITER
     %v update step
     for k = 1:n
         g1 = qx(:,:,k) - r2 * Lambda2_x(:,:,k); g2 = qy(:,:,k) - r2*Lambda2_y(:,:,k);
-        numerator = r2* fft2(u(:,:,k) + r1* Lambda1(:,:,k)) - r1 *(fft2(Dxt(g1) - Dyt(g2)));
+        numerator = r2* fft2(u(:,:,k) + r1* Lambda1(:,:,k)) - r1 *(fft2(Dxt(g1) + Dyt(g2)));
         v(:,:,k) = ifft2(numerator./denominator_v);
     end
 
